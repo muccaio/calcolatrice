@@ -1,6 +1,7 @@
 const display = document.getElementById('display');
 const historyDiv = document.getElementById('history');
 let history = [];
+let lastExpression = '';
 
 document.getElementById('theme-toggle').onclick = () => {
   const body = document.body;
@@ -41,7 +42,7 @@ function factorial(n) {
 }
 
 function calculate() {
-  if (!display.value) return;
+  if (!display.value || display.value === lastExpression) return;
   try {
     let expr = display.value
       .replace(/sqrt/g, 'Math.sqrt')
@@ -64,6 +65,7 @@ function calculate() {
 
     if (!isFinite(result)) throw Error();
 
+    lastExpression = display.value;
     history.unshift({ expr: display.value, result });
     localStorage.setItem('calc-history', JSON.stringify(history));
     renderHistory();
@@ -92,6 +94,8 @@ document.addEventListener('keydown', (e) => {
     calculate();
   } else if (key === 'Backspace') {
     backspace();
+  } else if (key === 'Escape') {
+    clearDisplay();
   }
 });
 
@@ -102,3 +106,4 @@ window.onload = () => {
     renderHistory();
   }
 };
+
